@@ -1,26 +1,50 @@
 from ._anvil_designer import Form1Template
 from anvil import *
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 
 class Form1(Form1Template):
   def __init__(self, **properties):
-    # Set Form properties and Data Bindings.
     self.init_components(**properties)
 
-    # Any code you write here will run before the form opens.
+    rows = anvil.server.call('query_database',
+                             "SELECT team_name FROM team ORDER BY team_name")
 
-    return_value = anvil.server.call('query_database', 'SELECT name FROM gefaengnis')
-    return_value = [entry[0] for entry in return_value]
-    print(return_value)
-    self.drop_down_ALMS_auswahl.items = return_value
-    self.drop_down_ALMS_auswahl_change()
+    # rows ist meist [(name,), (name,), ...]
+    team_names = [r[0] if not isinstance(r, dict) else r["team_name"] for r in rows]
+
+    self.drop_down_ALMS_auswahl.items = team_names
+
+    # WICHTIG: zuerst etwas auswählen, sonst selected_value = None
+    if team_names:
+      self.drop_down_ALMS_auswahl.selected_value = team_names[0]
+      self.drop_down_ALMS_auswahl_change()
 
   @handle("drop_down_ALMS_auswahl", "change")
   def drop_down_ALMS_auswahl_change(self, **event_args):
-    """This method is called when an item is selected"""
-    pass
+    team_name = self.drop_down_ALMS_auswahl.selected_value
+    if not team_name:
+      return
 
+    # Quotes escapen, sonst knallt es bei Namen mit '
+    team_name_sql = str(team_name).replace("'", "''")
+
+    sql = f"""
+SELECT DISTINCT
+  t.team_id AS teamID,
+  f.fahrer_id fahrerID,
+  f.fahrername AS fahrer,
+  v.hersteller AS auto
+FROM team t
+LEFT JOIN fahrer f ON f.team_id = t.team_id
+LEFT JOIN rennergebnis re ON re.fahrer_id = f.fahrer_id
+LEFT JOIN fahrzeuge v ON v.fahrzeug_id = re.fahrzeug_id
+WHERE t.team_name = '{team_name_sql}'
+ORDER BY f.fahrername
+"""
+    print(sql)
+
+    result = anvil.server.call('query_database', sql)
+    print(result)
+    
+    self.repeating_panel_Team_daten.items = result
     
