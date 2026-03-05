@@ -42,8 +42,11 @@ WHERE t.team_name = '{team_name_sql}'
 ORDER BY f.fahrername
 """
 
-    result = anvil.server.call('query_database', sql)
-    print(result)
     
-    self.repeating_panel_Team_daten.items = result
+    result = anvil.server.call('query_database', sql)
+
+    keys = ["teamID", "fahrerID", "fahrer", "auto"]
+    result_dicts = [dict(zip(keys, row)) for row in result]
+
+    self.repeating_panel_Team_daten.items = result_dicts
     
