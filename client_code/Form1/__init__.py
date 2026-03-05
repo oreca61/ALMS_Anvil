@@ -41,7 +41,6 @@ LEFT JOIN fahrzeuge v ON v.fahrzeug_id = re.fahrzeug_id
 WHERE t.team_name = '{team_name_sql}'
 ORDER BY f.fahrername
 """
-    print(sql)
 
     result = anvil.server.call('query_database', sql)
     print(result)
