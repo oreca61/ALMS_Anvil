@@ -1,0 +1,11 @@
+components:
+- layout_properties: {column: VJQQOR}
+  name: button_1
+  properties: {text: button_1}
+  type: Button
+- layout_properties: {column: JKSDUP}
+  name: label_2
+  properties: {text: Team info}
+  type: Label
+container: {type: DataRowPanel}
+is_package: true
