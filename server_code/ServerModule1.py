@@ -36,4 +36,9 @@ def query_database_dict(query: str):
 
 @anvil.server.callable
 def hole_fahrer_plot_daten():
-  return {"test": {"rennen": ["Rennen 1"], "punkte": [10]}}
+  return {
+    "test": {
+      "rennen": ["Rennen 1"],
+      "punkte": [10]
+    }
+  }
