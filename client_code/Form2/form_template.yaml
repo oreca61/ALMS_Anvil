@@ -19,7 +19,8 @@ components:
     properties: {}
     type: ColumnPanel
   - components:
-    - layout_properties: {grid_position: 'SLMZUS,UCWVWA'}
+    - event_bindings: {}
+      layout_properties: {grid_position: 'SLMZUS,UCWVWA'}
       name: button_2
       properties: {text: Season standings}
       type: Button

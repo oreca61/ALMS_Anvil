@@ -33,3 +33,33 @@ def query_database_dict(query: str):
     cur = conn.cursor()
     result = cur.execute(query).fetchall()
   return [dict(row) for row in result]
+
+@anvil.server.callable
+def hole_fahrer_plot_daten():
+  conn = sqlite3.connect("/mnt/data/ALMS.db")
+  cursor = conn.cursor()
+
+  query = """
+  SELECT 
+      f.fahrername,
+      r.strecke,
+      r.datum,
+      re.punkte
+  FROM rennergebnis re
+  JOIN fahrer f ON re.fahrer_id = f.fahrer_id
+  JOIN rennen r ON re.renn_id = r.renn_id
+  ORDER BY r.datum, f.fahrername
+  """
+
+  cursor.execute(query)
+  rows = cursor.fetchall()
+  conn.close()
+
+  daten = defaultdict(lambda: {"rennen": [], "punkte": []})
+
+  for fahrername, strecke, datum, punkte in rows:
+    rennen_label = f"{strecke} ({datum})"
+    daten[fahrername]["rennen"].append(rennen_label)
+    daten[fahrername]["punkte"].append(punkte)
+
+  return dict(daten)
