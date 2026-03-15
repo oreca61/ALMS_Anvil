@@ -35,10 +35,29 @@ def query_database_dict(query: str):
   return [dict(row) for row in result]
 
 @anvil.server.callable
-def hole_fahrer_plot_daten():
+def hole_fahrer_endstand():
+  with sqlite3.connect(data_files["ALMS.db"]) as conn:
+    cursor = conn.cursor()
+
+    query = """
+        SELECT f.fahrername, SUM(re.punkte) AS gesamtpunkte
+        FROM rennergebnis re
+        JOIN fahrer f ON re.fahrer_id = f.fahrer_id
+        GROUP BY f.fahrer_id, f.fahrername
+        ORDER BY gesamtpunkte DESC
+        """
+
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+  fahrer = []
+  punkte = []
+
+  for name, gesamtpunkte in rows:
+    fahrer.append(name)
+    punkte.append(gesamtpunkte)
+
   return {
-    "test": {
-      "rennen": ["Rennen 1"],
-      "punkte": [10]
-    }
+    "fahrer": fahrer,
+    "punkte": punkte
   }

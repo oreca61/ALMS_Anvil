@@ -11,23 +11,20 @@ class Form3(Form3Template):
   def __init__(self, **properties):
     self.init_components(**properties)
 
-    daten = anvil.server.call("hole_fahrer_plot_daten")
-    print(daten)
+    daten = anvil.server.call("hole_fahrer_endstand")
 
     fig = go.Figure()
 
-    for fahrername, werte in daten.items():
-      fig.add_trace(go.Scatter(
-        x=werte["rennen"],
-        y=werte["punkte"],
-        mode="lines+markers",
-        name=fahrername
-      ))
+    fig.add_trace(go.Bar(
+      x=daten["punkte"],
+      y=daten["fahrer"],
+      orientation="h"
+    ))
 
     fig.update_layout(
-      title="Punkte der Fahrer pro Rennen",
-      xaxis_title="Rennen",
-      yaxis_title="Punkte"
+      title="Endstand der Fahrer",
+      xaxis_title="Punkte",
+      yaxis_title="Fahrer"
     )
 
     self.plot_1.figure = fig
