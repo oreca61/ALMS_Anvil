@@ -11,21 +11,13 @@ class Form3(Form3Template):
   def __init__(self, **properties):
     self.init_components(**properties)
 
-    daten = anvil.server.call("hole_fahrer_endstand")
-
     fig = go.Figure()
 
     fig.add_trace(go.Bar(
-      x=daten["punkte"],
-      y=daten["fahrer"],
+      x=[10, 20, 30],
+      y=["A", "B", "C"],
       orientation="h"
     ))
-
-    fig.update_layout(
-      title="Endstand der Fahrer",
-      xaxis_title="Punkte",
-      yaxis_title="Fahrer"
-    )
 
     self.plot_1.figure = fig
 
