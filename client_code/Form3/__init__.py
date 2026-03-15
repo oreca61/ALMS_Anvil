@@ -11,15 +11,24 @@ class Form3(Form3Template):
   def __init__(self, **properties):
     self.init_components(**properties)
 
-    fig = go.Figure()
+    daten = anvil.server.call("hole_fahrer_endstand")
+    print(daten)
 
-    fig.add_trace(go.Bar(
-      x=[10, 20, 30],
-      y=["A", "B", "C"],
-      orientation="h"
-    ))
+    self.plot_1.data = [
+      go.Bar(
+        x=daten["punkte"],
+        y=daten["fahrer"],
+        orientation="h"
+      )
+    ]
 
-    self.plot_1.figure = fig
+    self.plot_1.layout = go.Layout(
+      title="Endstand der Fahrer",
+      xaxis=dict(title="Punkte"),
+      yaxis=dict(title="Fahrer", autorange="reversed"),
+      margin=dict(l=260, r=40, t=60, b=40)
+    )
+
 
   @handle("plot_1", "click")
   def plot_1_click(self, points, **event_args):
