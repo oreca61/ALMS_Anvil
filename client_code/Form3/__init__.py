@@ -11,46 +11,63 @@ class Form3(Form3Template):
   def __init__(self, **properties):
     self.init_components(**properties)
 
-    # Endstand
+    
     daten_endstand = anvil.server.call("hole_fahrer_endstand")
+    
 
     self.plot_endstand.data = [
+
+      
       go.Bar(
+        
         x=daten_endstand["punkte"],
         y=daten_endstand["fahrer"],
         orientation="h"
+        
       )
+      
     ]
 
     self.plot_endstand.layout = go.Layout(
-      title="Endstand der Fahrer",
-      xaxis=dict(title="Punkte"),
-      yaxis=dict(title="Fahrer", autorange="reversed"),
-      margin=dict(l=260, r=40, t=60, b=40)
+      
+      title="Endstand der Fahrer" ,
+      
+      xaxis= dict(title="Punkte"),
+      yaxis= dict(title="Fahrer" , autorange="reversed" ),
+      
+      margin = dict(l=260 , r=40 , t=60  , b=40)
     )
 
     # Verlauf
     daten_verlauf = anvil.server.call("hole_fahrer_verlauf")
 
+    
     plot_daten = []
 
     for fahrername, werte in daten_verlauf.items():
       plot_daten.append(
         go.Scatter(
+          
           x=werte["rennen"],
-          y=werte["punkte"],
+          y=werte["punkte"] ,
+          
           mode="lines+markers",
+          
           name=fahrername
         )
+        
       )
 
     self.plot_verlauf.data = plot_daten
 
     self.plot_verlauf.layout = go.Layout(
-      title="Punkteverlauf der Fahrer",
-      xaxis=dict(title="Rennen"),
-      yaxis=dict(title="Kumulative Punkte"),
-      margin=dict(l=80, r=40, t=60, b=60)
+      
+      title= "Punkteverlauf der Fahrer" ,
+      
+      xaxis =dict(title="Rennen"),
+      
+      yaxis= dict(title="Kumulative Punkte"),
+      margin= dict(l=80 , r=40 , t=60 , b=60)
     )
 
 

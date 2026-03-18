@@ -30,9 +30,11 @@ components:
     name: data_grid_2
     properties:
       columns:
-      - {data_key: fahrerID, id: JKSDUP, title: Fahrer_id}
-      - {data_key: fahrer, id: VJQQOR, title: Fahrer}
-      - {data_key: team, id: OJLQEN, title: Team}
+      - {data_key: fahrername, id: JKSDUP, title: Name}
+      - {data_key: teamname, id: VJQQOR, title: Teamname}
+      - {data_key: geburtsdatum, id: OJLQEN, title: Geburtsdatum}
+      - {data_key: nationalitaet, id: CPFZQE, title: Nationalitaet}
+      - {data_key: startnummer, id: YHCSRB, title: Startnummer}
     type: DataGrid
   layout_properties: {slot: default}
   name: column_panel_1

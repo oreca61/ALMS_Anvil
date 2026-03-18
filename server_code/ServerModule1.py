@@ -22,22 +22,32 @@ import random
 
 @anvil.server.callable
 def query_database(query: str):
+  
   with sqlite3.connect(data_files["ALMS.db"]) as conn:
     cur = conn.cursor()
+
+    
     result = cur.execute(query).fetchall()
   return result
+  
 
 @anvil.server.callable
 def query_database_dict(query: str):
   with sqlite3.connect(data_files["ALMS.db"]) as conn:
+    
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
+    
     result = cur.execute(query).fetchall()
   return [dict(row) for row in result]
 
+  
+
 @anvil.server.callable
 def hole_fahrer_endstand():
+  
   with sqlite3.connect(data_files["ALMS.db"]) as conn:
+    
     cursor = conn.cursor()
 
     query = """
@@ -98,6 +108,7 @@ def hole_fahrer_verlauf():
   for fahrername, renn_id, strecke, punkte in rows:
     label = f"R{renn_id}"
 
+    
     if fahrername not in fahrer_daten:
       fahrer_daten[fahrername] = {
         "rennen": [],
@@ -105,33 +116,51 @@ def hole_fahrer_verlauf():
       }
 
     fahrer_daten[fahrername]["rennen"].append(label)
+    
     fahrer_daten[fahrername]["punkte_pro_rennen"].append(punkte)
 
-    # Kumulative Punkte berechnen
+
   result = {}
 
+  
   for fahrername, daten in fahrer_daten.items():
     kumulativ = []
+    
     gesamt = 0
 
     for p in daten["punkte_pro_rennen"]:
       gesamt += p
+      
       kumulativ.append(gesamt)
 
+
+      
+
     result[fahrername] = {
-      "rennen": daten["rennen"],
-      "punkte": kumulativ
+      "rennen":  daten["rennen"] ,
+      
+      "punkte":kumulativ
+      
     }
+
+    
 
   return result
 
+
+
 @anvil.server.callable
 def hole_random_news():
+  
   with sqlite3.connect(data_files["ALMS.db"]) as conn:
+
+    
     cursor = conn.cursor()
+    
     news_liste = []
 
-    # Bester Fahrer
+
+    
     cursor.execute("""
             SELECT f.fahrername, SUM(rg.punkte) AS gesamtpunkte
             FROM rennergebnis rg
@@ -140,7 +169,11 @@ def hole_random_news():
             ORDER BY gesamtpunkte DESC
             LIMIT 1
         """)
+
+    
     row = cursor.fetchone()
+
+    
     if row is not None:
       news_liste.append(f"{row[0]} ist aktuell der beste Fahrer mit {row[1]} Punkten.")
 
@@ -168,11 +201,14 @@ def hole_random_news():
             ORDER BY siege DESC
             LIMIT 1
         """)
+    
     row = cursor.fetchone()
+    
     if row is not None:
       news_liste.append(f"{row[0]} hat die meisten Siege: {row[1]}.")
 
-      # Fahrer mit den meisten Podestplätzen
+
+    
     cursor.execute("""
             SELECT f.fahrername, COUNT(*) AS podien
             FROM rennergebnis rg
@@ -182,11 +218,19 @@ def hole_random_news():
             ORDER BY podien DESC
             LIMIT 1
         """)
-    row = cursor.fetchone()
+
+    
+    row=cursor.fetchone()
+
+
+    
     if row is not None:
       news_liste.append(f"{row[0]} hat die meisten Podestplätze: {row[1]}.")
 
-  if len(news_liste) == 0:
+  
+  if len(news_liste) ==0:
     return "Keine News verfügbar."
 
+
+  
   return random.choice(news_liste)
