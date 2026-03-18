@@ -49,4 +49,9 @@ ORDER BY f.fahrername
     result_dicts = [dict(zip(keys, row)) for row in result]
 
     self.repeating_panel_Team_daten.items = result_dicts
+
+  @handle("button_1", "click")
+  def button_1_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    open_form("Form2")
     

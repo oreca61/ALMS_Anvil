@@ -3,10 +3,6 @@ components:
   name: navbar_links
   properties: {}
   type: FlowPanel
-- layout_properties: {slot: title}
-  name: label_1
-  properties: {text: ALMS 2026}
-  type: Label
 - components:
   - layout_properties: {grid_position: 'EFJTFX,YOSKKM'}
     name: drop_down_ALMS_auswahl
@@ -28,6 +24,20 @@ components:
     type: DataGrid
   layout_properties: {slot: default}
   name: column_panel_1
+  properties: {}
+  type: ColumnPanel
+- components:
+  - layout_properties: {grid_position: 'MWVTIN,XZYOXM'}
+    name: label_1
+    properties: {text: ALMS 2026}
+    type: Label
+  - event_bindings: {}
+    layout_properties: {grid_position: 'MWVTIN,TOEVIN'}
+    name: button_1
+    properties: {text: Back}
+    type: Button
+  layout_properties: {slot: title}
+  name: column_panel_2
   properties: {}
   type: ColumnPanel
 container:

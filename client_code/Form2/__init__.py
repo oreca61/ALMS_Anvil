@@ -11,6 +11,9 @@ class Form2(Form2Template):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
 
+    news = anvil.server.call("hole_random_news")
+    self.label_news.text = news
+
     # Any code you write here will run before the form opens.
 
   @handle("button_1", "click")

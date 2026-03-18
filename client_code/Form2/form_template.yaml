@@ -9,6 +9,14 @@ components:
   type: Label
 - components:
   - components:
+    - name: label_news
+      properties: {}
+      type: Label
+    layout_properties: {grid_position: 'PITDUS,BWWIUC'}
+    name: rich_text_1
+    properties: {content: 'RANDOM NEWS:', font_size: 19}
+    type: RichText
+  - components:
     - event_bindings: {}
       layout_properties: {grid_position: 'IGKQLD,YXSDIV'}
       name: button_1
