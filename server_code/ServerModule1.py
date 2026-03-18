@@ -20,16 +20,20 @@ import random
 #   return 42
 #
 
+
+
+
+
 @anvil.server.callable
-def query_database(query: str):
-  
+def query_database(sql, params=None):
+  if params is None:
+    params = []
+
   with sqlite3.connect(data_files["ALMS.db"]) as conn:
     cur = conn.cursor()
-
+    cur.execute(sql, params)
+    return cur.fetchall()
     
-    result = cur.execute(query).fetchall()
-  return result
-  
 
 @anvil.server.callable
 def query_database_dict(query: str):
@@ -234,3 +238,74 @@ def hole_random_news():
 
   
   return random.choice(news_liste)
+
+def get_connection():
+  return psycopg2.connect(
+  host="DEIN_HOST",
+  database="DEINE_DATENBANK",
+  user="DEIN_BENUTZER",
+  password="DEIN_PASSWORT",
+  port="5432"
+)
+
+
+@anvil.server.callable
+def get_teams():
+  conn = get_connection()
+  try:
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+      cur.execute("""
+        SELECT team_name
+        FROM team
+        ORDER BY team_name
+      """)
+      rows = cur.fetchall()
+      return [dict(row) for row in rows]
+  finally:
+    conn.close()
+
+
+@anvil.server.callable
+def get_all_fahrer():
+  conn = get_connection()
+  try:
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+      cur.execute("""
+        SELECT
+          f.fahrername AS fahrername,
+          t.team_name AS teamname,
+          f.geburtsdatum AS geburtsdatum,
+          f.nationalitaet AS nationalitaet,
+          f.startnummer AS startnummer
+        FROM fahrer f
+        LEFT JOIN team t ON f.team_id = t.team_id
+        ORDER BY f.fahrername
+      """)
+      rows = cur.fetchall()
+      return [dict(row) for row in rows]
+  finally:
+    conn.close()
+
+
+@anvil.server.callable
+def get_team_data(team_name):
+  conn = get_connection()
+  try:
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+      cur.execute("""
+        SELECT DISTINCT
+          t.team_id AS "teamID",
+          f.fahrer_id AS "fahrerID",
+          f.fahrername AS fahrer,
+          v.hersteller AS auto
+        FROM team t
+        LEFT JOIN fahrer f ON f.team_id = t.team_id
+        LEFT JOIN rennergebnis re ON re.fahrer_id = f.fahrer_id
+        LEFT JOIN fahrzeuge v ON v.fahrzeug_id = re.fahrzeug_id
+        WHERE t.team_name = %s
+        ORDER BY f.fahrername
+      """, (team_name,))
+      rows = cur.fetchall()
+      return [dict(row) for row in rows]
+  finally:
+    conn.close()
